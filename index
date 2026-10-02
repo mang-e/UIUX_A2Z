@@ -8,35 +8,51 @@
     <!-- 공통 CSS -->
     <link rel="stylesheet" href="css/style.css">
     
-    <!-- 팀원별 독립 CSS (서로 다른 파일이라 충돌이 안 납니다) -->
+    <!-- 팀원별 독립 CSS -->
     <link rel="stylesheet" href="css/food.css">
     <link rel="stylesheet" href="css/deco.css">
     <link rel="stylesheet" href="css/play.css">
 </head>
 <body>
 
-    <header class="main-header">...</header>
+    <!-- 헤더 -->
+    <header class="main-header">
+        <h1>요즘 10대 탐구생활</h1>
+        <p>10대는 어디서, 무엇을 입고, 어떻게 놀까?</p>
+    </header>
 
-    <nav class="tab-nav">...</nav>
+    <!-- 카테고리 버튼 바 -->
+    <nav class="tab-nav">
+        <button class="tab-btn active" data-target="section-food">먹거리</button>
+        <button class="tab-btn" data-target="section-deco">꾸밀거리</button>
+        <button class="tab-btn" data-target="section-play">놀거리</button>
+    </nav>
 
+    <!-- 메인 콘텐츠 영역 -->
     <main class="main-content">
         <!-- 멤버 A 작업 구역 -->
         <section id="section-food" class="content-section active">
-            <!-- 멤버 A는 index.html의 이 태그 내부 내용만 수정합니다 -->
+            <h2 style="color: var(--color-food); margin-bottom: 20px;">[먹거리] 영역입니다</h2>
+            <p>두쫀쿠, 요아정 꿀조합 등 인터랙티브 콘텐츠가 들어갈 자리입니다.</p>
         </section>
 
         <!-- 멤버 B 작업 구역 -->
         <section id="section-deco" class="content-section">
-            <!-- 멤버 B는 index.html의 이 태그 내부 내용만 수정합니다 -->
+            <h2 style="color: var(--color-deco); margin-bottom: 20px;">[꾸밀거리] 영역입니다</h2>
+            <p>행운 거북이, 가방 백꾸, OOTD 콘텐츠가 들어갈 자리입니다.</p>
         </section>
 
         <!-- 멤버 C 작업 구역 -->
         <section id="section-play" class="content-section">
-            <!-- 멤버 C는 index.html의 이 태그 내부 내용만 수정합니다 -->
+            <h2 style="color: var(--color-play); margin-bottom: 20px;">[놀거리] 영역입니다</h2>
+            <p>말랑이 터치 시뮬레이터, 슬라임 콘텐츠가 들어갈 자리입니다.</p>
         </section>
     </main>
 
-    <footer class="main-footer">...</footer>
+    <!-- 푸터 -->
+    <footer class="main-footer">
+        <p>ⓒ 2026 Team DT. All rights reserved.</p>
+    </footer>
 
     <!-- 공통 JS -->
     <script src="js/main.js"></script>
