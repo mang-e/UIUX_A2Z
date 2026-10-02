@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>요즘10대 : OOTD부터 핫플까지</title>
+
+    <!-- 공통 CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- 팀원별 독립 CSS (서로 다른 파일이라 충돌이 안 납니다) -->
+    <link rel="stylesheet" href="css/food.css">
+    <link rel="stylesheet" href="css/deco.css">
+    <link rel="stylesheet" href="css/play.css">
+</head>
+<body>
+
+    <header class="main-header">...</header>
+
+    <nav class="tab-nav">...</nav>
+
+    <main class="main-content">
+        <!-- 멤버 A 작업 구역 -->
+        <section id="section-food" class="content-section active">
+            <!-- 멤버 A는 index.html의 이 태그 내부 내용만 수정합니다 -->
+        </section>
+
+        <!-- 멤버 B 작업 구역 -->
+        <section id="section-deco" class="content-section">
+            <!-- 멤버 B는 index.html의 이 태그 내부 내용만 수정합니다 -->
+        </section>
+
+        <!-- 멤버 C 작업 구역 -->
+        <section id="section-play" class="content-section">
+            <!-- 멤버 C는 index.html의 이 태그 내부 내용만 수정합니다 -->
+        </section>
+    </main>
+
+    <footer class="main-footer">...</footer>
+
+    <!-- 공통 JS -->
+    <script src="js/main.js"></script>
+
+    <!-- 팀원별 독립 JS -->
+    <script src="js/food.js"></script>
+    <script src="js/deco.js"></script>
+    <script src="js/play.js"></script>
+</body>
+</html>
