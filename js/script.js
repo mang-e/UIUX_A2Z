@@ -62,18 +62,6 @@ const CATS = {
   fashion: { n: '패션', i: 'bag', d: '입는 것을 넘어 꾸미고 고르는 즐거움. 내 취향대로 조합해보세요.' },
 };
 
-
-// 예시 렌더링 코드
-card.innerHTML = `
-  <div class="card-image">
-    <img src="${item.img}" alt="${item.t}">
-  </div>
-  <div class="card-content">
-    <h3>${item.t}</h3>
-    <p>${item.lead}</p>
-  </div>
-`;
-
 const LAB = { food: 'FOOD', play: 'PLAY', fashion: 'FASHION' };
 
 /* ---------------- 트렌드 데이터 (카테고리별 데이터는 food.js · play.js · fashion.js 에서 채워요) ---------------- */
