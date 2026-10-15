@@ -3,11 +3,13 @@
 /* ---------------- 트렌드 데이터 ---------------- */
 T.fashion = [
   { t: '옥', type: 'jade',
+    img: 'img/okk_img.jpg',
     lead: '옥을 팔찌, 목걸이, 반지 같은 패션 소품으로 즐기는 흐름이에요.',
     body: ['맑고 은은한 옥빛이 어떤 옷에도 포인트가 되어, 전통 소재가 요즘 감각의 액세서리로 다시 주목받고 있어요. 팔찌, 펜던트, 귀걸이, 반지로 부담 없이 착용할 수 있어요.',
       '옥가락지나 노리개를 아껴 두던 마음과 이어지는 취향이에요. 아래에서 옥 구슬을 골라 줄에 끼우고, 나만의 옥 팔찌를 완성해보세요.'],
     talk: '집에 오래 전해 내려온 소품이나 액세서리가 있나요? 요즘 스타일에 어떻게 어울릴지 이야기해봐요.' },
   { t: '메지루시', type: 'decor',
+    img: 'img/mejirushi_img.jpg',
     items: [{ n: '우산', a: 'umb', at: [154, 296] }, { n: '가방', a: 'bag', at: [230, 122] }, { n: '텀블러', a: 'tum', at: [302, 160] }],
     colors: ['#1C94F5', '#F65AC2', '#FFEA00', '#7BE0B0', '#1C1C20'],
     parts: ['charm:#FFB36B:0', 'charm:#F7B6D8:1', 'charm:#B79CFF:2', 'charm:#7BE0B0:0', 'charm:#FFE16B:2', 'charm:#9CCBF5:1'],
@@ -16,6 +18,7 @@ T.fashion = [
       '이름표를 달던 마음에 귀여움이 더해진 거예요. 아래에서 소품을 고르고 메지루시를 추가한 뒤, 드래그해서 원하는 위치에 달아보세요.'],
     talk: '내 물건을 알아보기 위해 달아둔 나만의 표시가 있나요? 이유와 함께 이야기해봐요.' },
   { t: '젤리슈즈 꾸미기', type: 'decor',
+    img: 'img/jelly_img.webp',
     items: [{ n: '젤리슈즈', a: 'shoe', at: [188, 164] }],
     colors: ['#F7A8D8', '#9CCBF5', '#C9F5E1', '#E1E5EA', '#FFE16B'],
     parts: ['star', 'heart', 'flower', 'bow', 'charm:#FFB36B:0', 'charm:#B79CFF:2'],
@@ -24,6 +27,7 @@ T.fashion = [
       '어릴 적 신던 젤리 샌들의 추억이 새로운 방식으로 돌아온 셈이에요. 아래에서 색을 고르고 장식을 드래그해 원하는 곳에 달아보세요.'],
     talk: '어릴 적 신던 신발 중 기억에 남는 것이 있나요? 요즘 신발과 비교해봐요.' },
   { t: '볼펜 꾸미기', type: 'decor',
+    img: 'img/pen_img.jpg',
     items: [{ n: '볼펜', a: 'pen', at: [180, 165] }],
     colors: ['#1C94F5', '#F65AC2', '#FFEA00', '#1C1C20', '#7BE0B0'],
     parts: ['star', 'heart', 'flower', 'bow', 'charm:#FFB36B:0', 'charm:#B79CFF:2'],
@@ -150,18 +154,3 @@ Object.assign(X, {
     rows(); draw();
   },
 });
-
-/* ---------------- 목록 카드 배경 이미지 ---------------- */
-(() => {
-  const DIR = 'img/'; /* 깃허브 이미지 폴더 경로에 맞게 수정 */
-  const BG = { '옥': 'okk_img.jpg', '메지루시': 'mejirushi_img.jpg', '젤리슈즈 꾸미기': 'jelly_img.webp', '볼펜 꾸미기': 'pen_img.jpg' };
-  const apply = () => document.querySelectorAll('#app h1,#app h2,#app h3,#app h4').forEach(h => {
-    const f = BG[h.textContent.trim()];
-    const card = f && (h.closest('[class*="card"]') || h.parentElement);
-    if (!card || !/VIEW MORE/i.test(card.textContent) || card.classList.contains('jade-image-card-background')) return;
-    card.style.setProperty('--jade-image-card-url', `url("${DIR}${f}")`);
-    card.classList.add('jade-image-card-background');
-  });
-  apply();
-  new MutationObserver(apply).observe(document.getElementById('app'), { childList: true, subtree: true });
-})();
