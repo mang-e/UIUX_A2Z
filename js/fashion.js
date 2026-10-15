@@ -36,8 +36,8 @@ T.fashion = [
 /* 장식 꾸미기용 도안 (360x330) */
 const ART = {
   umb: c => `<path d="M40 150Q180 -20 320 150Q290 128 255 150Q217 128 180 150Q143 128 105 150Q70 128 40 150z" fill="${c}"/><path d="M180 36L105 150M180 36V150M180 36L255 150" stroke="#fff" stroke-opacity=".35" stroke-width="2" fill="none"/><path d="M180 150V268q0 26-26 26" stroke="${K}" stroke-width="8" fill="none" stroke-linecap="round"/><circle cx="180" cy="34" r="5" fill="${K}"/>`,
-  bag: c => `<path data-snap-handle="bag" d="M130 120Q130 52 180 52T230 120" stroke="${K}" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M137 116Q137 64 180 64T223 116" stroke="#fff" stroke-opacity=".32" stroke-width="2" fill="none"/><rect x="85" y="116" width="190" height="170" rx="18" fill="${c}"/><path d="M98 128H262" stroke="#fff" stroke-opacity=".38" stroke-width="2"/><rect x="85" y="156" width="190" height="14" fill="#fff" fill-opacity=".7"/><path d="M100 178H260" stroke="${K}" stroke-opacity=".12" stroke-width="2"/><rect x="125" y="200" width="110" height="56" rx="10" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-dasharray="6 5"/><path d="M143 211H217" stroke="#fff" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>`,
-  tum: c => `<rect x="108" y="64" width="144" height="26" rx="10" fill="${K}"/><rect x="116" y="69" width="128" height="4" rx="2" fill="#fff" fill-opacity=".18"/><rect x="170" y="30" width="14" height="40" rx="6" fill="${K}"/><path d="M178 35V61" stroke="#fff" stroke-opacity=".24" stroke-width="2" stroke-linecap="round"/><path d="M116 90H244L232 280q-2 22-24 22H152q-22 0-24-22z" fill="${c}"/><path d="M128 98H232L222 274q-1 12-13 12H151q-12 0-13-12z" fill="#fff" fill-opacity=".08"/><path data-snap-handle="tum" d="M244 130H276q26 0 26 28v10q0 28-26 28H238" stroke="${K}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M249 138H276q17 0 17 20v10q0 20-17 20H243" stroke="#fff" stroke-opacity=".26" stroke-width="2" fill="none"/><path d="M140 110L148 270" stroke="#fff" stroke-opacity=".45" stroke-width="8" stroke-linecap="round"/>`,
+  bag: c => `<path d="M130 120Q130 52 180 52T230 120" stroke="${K}" stroke-width="9" fill="none"/><rect x="85" y="116" width="190" height="170" rx="18" fill="${c}"/><rect x="85" y="156" width="190" height="14" fill="#fff" fill-opacity=".7"/><rect x="125" y="200" width="110" height="56" rx="10" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-dasharray="6 5"/>`,
+  tum: c => `<rect x="108" y="64" width="144" height="26" rx="10" fill="${K}"/><rect x="170" y="30" width="14" height="40" rx="6" fill="${K}"/><path d="M116 90H244L232 280q-2 22-24 22H152q-22 0-24-22z" fill="${c}"/><path d="M244 130H276q26 0 26 28v10q0 28-26 28H238" stroke="${K}" stroke-width="10" fill="none"/><path d="M140 110L148 270" stroke="#fff" stroke-opacity=".45" stroke-width="8" stroke-linecap="round"/>`,
   shoe: c => `<path d="M30 252C30 202 56 176 100 172C138 168 150 150 176 138C210 122 238 134 258 162C278 192 320 202 334 252z" fill="${c}" fill-opacity=".78"/><path d="M30 252H334V266Q334 286 312 286H52Q30 286 30 266z" fill="${c}"/><path d="M118 176Q188 150 252 170" stroke="${c}" stroke-width="18" fill="none" stroke-linecap="round"/><path d="M60 214Q110 190 168 200" stroke="#fff" stroke-opacity=".55" stroke-width="8" fill="none" stroke-linecap="round"/><g fill="#fff" fill-opacity=".85"><circle cx="150" cy="170" r="5"/><circle cx="188" cy="164" r="5"/><circle cx="226" cy="168" r="5"/><circle cx="86" cy="226" r="5"/><circle cx="262" cy="226" r="5"/></g>`,
   pen: c => `<g transform="rotate(-24 180 165)"><rect x="70" y="150" width="230" height="30" rx="15" fill="${c}"/><rect x="70" y="150" width="60" height="30" fill="${K}" fill-opacity=".18"/><rect x="250" y="146" width="22" height="38" rx="6" fill="#fff" fill-opacity=".6"/><path d="M70 150L30 165L70 180z" fill="${K}"/><rect x="300" y="157" width="22" height="16" rx="4" fill="${K}"/><path d="M96 158H240" stroke="#fff" stroke-opacity=".5" stroke-width="4" stroke-linecap="round"/></g>`,
 };
@@ -95,7 +95,6 @@ Object.assign(X, {
       if (done && tt === 1 && T < 0) { const y = CY - RT; s += `<g class="pop"><path d="M${CX} ${y}Q${CX - 5} ${y - 17} ${CX - 12} ${y - 34}M${CX} ${y}Q${CX + 5} ${y - 17} ${CX + 12} ${y - 34}" stroke="${K}" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="${CX}" cy="${y}" r="7" fill="${K}"/></g>`; }
       sc.innerHTML = s;
     };
-
     const rows = () => {
       bar.innerHTML = rowOf('구슬', BD.map((b, i) => `<button class="chip" data-b="${i}"${fit(i) ? '' : ' disabled'}>${mini(i)}${b.n}</button>`).join(''))
         + rowOf('줄', `<button class="chip" data-r="1"${busy || !beads.length ? ' disabled' : ''}>다시 하기</button>`);
@@ -114,7 +113,6 @@ Object.assign(X, {
       say(`팔찌 완성! 구슬 ${beads.length}알로 나만의 옥 팔찌를 만들었어요.`);
       beep(880); await sleep(120); beep(1175);
     };
-
     const reset = async () => {
       if (busy || !beads.length) return;
       busy = true; rows(); say('구슬을 빼는 중…'); beep(400);
@@ -130,344 +128,25 @@ Object.assign(X, {
   /* 메지루시 · 젤리슈즈 · 볼펜: 장식을 추가하고 드래그해서 배치 */
   decor(st, bar, c) {
     let it = 0, col = 0, ch = [], id = 0;
-    const isMejirushi = c.t === '메지루시';
-
-    st.innerHTML = '<svg id="sc" class="scene dgs" viewBox="0 0 360 330" aria-label="소품 꾸미기 공간" style="touch-action:none"></svg><p class="hint">장식을 추가한 뒤 드래그해서 원하는 곳에 놓아보세요 · 장식을 더블클릭하면 떼어낼 수 있어요</p>';
+    st.innerHTML = '<svg id="sc" class="scene dgs" viewBox="0 0 360 330"></svg><p class="hint">장식을 추가한 뒤 드래그해서 원하는 곳에 달아보세요 · 더블클릭하면 떼요</p>';
     const svg = $('#sc', st);
-
-    const partSvg = k => {
-      if (k.startsWith('charm:')) {
-        const [, h, n] = k.split(':');
-        return `<g transform="translate(-31 -10) scale(1.3)">${I.charm(h, +n)}</g>`;
-      }
-      return `<g transform="translate(-26 -26) scale(1.1)">${I[k]()}</g>`;
-    };
-
-    const draw = () => {
-      svg.innerHTML = ART[c.items[it].a](c.colors[col]) + ch.map(p =>
-        `<g class="dg${p.snapped ? ' is-snapped' : ''}" data-id="${p.id}" transform="translate(${p.x} ${p.y})"><g class="${p.k.startsWith('charm') ? 'swy' : ''}">${partSvg(p.k)}</g></g>`
-      ).join('');
-    };
-
-    const label = k => k.startsWith('charm:')
-      ? ic('charm', k.split(':')[1], +k.split(':')[2])
-      : ic(k);
-
-    const rows = () => {
-      const itemRow = c.items.length > 1
-        ? rowOf('물건', c.items.map((x, i) => `<button class="chip${i === it ? ' on' : ''}" data-it="${i}">${x.n}</button>`).join(''))
-        : '';
-      // 메지루시는 장식 색상 선택을 표시하지 않음
-      const colorRow = isMejirushi
-        ? ''
-        : rowOf('색상', c.colors.map((x, i) => `<button class="sw${i === col ? ' on' : ''}" data-c="${i}" style="background:${x}" aria-label="색 ${i + 1}"></button>`).join(''));
-
-      bar.innerHTML = itemRow + colorRow
-        + rowOf('장식 추가', c.parts.map(k => `<button class="chip" data-k="${k}">${label(k)}</button>`).join('')
-          + '<button class="chip" data-r="1">모두 떼기</button>');
-      colBar(bar);
-    };
-
+    const partSvg = k => { if (k.startsWith('charm:')) { const [, h, n] = k.split(':'); return `<g transform="translate(-31 -10) scale(1.3)">${I.charm(h, +n)}</g>`; } return `<g transform="translate(-26 -26) scale(1.1)">${I[k]()}</g>`; };
+    const draw = () => { svg.innerHTML = ART[c.items[it].a](c.colors[col]) + ch.map(p => `<g class="dg" data-id="${p.id}" transform="translate(${p.x} ${p.y})"><g class="${p.k.startsWith('charm') ? 'swy' : ''}">${partSvg(p.k)}</g></g>`).join(''); };
+    const label = k => k.startsWith('charm:') ? ic('charm', k.split(':')[1], +k.split(':')[2]) : ic(k);
+    const rows = () => { bar.innerHTML = (c.items.length > 1 ? rowOf('물건', c.items.map((x, i) => `<button class="chip${i === it ? ' on' : ''}" data-it="${i}">${x.n}</button>`).join('')) : '') + rowOf('색상', c.colors.map((x, i) => `<button class="sw${i === col ? ' on' : ''}" data-c="${i}" style="background:${x}" aria-label="색 ${i + 1}"></button>`).join('')) + rowOf('장식 추가', c.parts.map(k => `<button class="chip" data-k="${k}">${label(k)}</button>`).join('') + '<button class="chip" data-r="1">모두 떼기</button>'); colBar(bar); };
     bar.onclick = e => {
-      const b = e.target.closest('button');
-      if (!b || b.disabled) return;
-      const d = b.dataset;
-
-      if (d.it !== undefined) it = +d.it;
-      if (d.c !== undefined) col = +d.c;
-      if (d.k) {
-        const at = c.items[it].at;
-        ch.push({
-          id: ++id,
-          k: d.k,
-          x: Math.max(30, Math.min(330, at[0] + (Math.random() - .5) * 150)),
-          y: Math.max(30, Math.min(300, at[1] + 10 + Math.random() * 50)),
-          snapped: false
-        });
-        if (ch.length > 8) ch.shift();
-        beep(700);
-      }
+      const b = e.target.closest('button'); if (!b) return; const d = b.dataset;
+      if (d.it) it = +d.it; if (d.c) col = +d.c;
+      if (d.k) { const at = c.items[it].at; ch.push({ id: ++id, k: d.k, x: Math.max(30, Math.min(330, at[0] + (Math.random() - .5) * 150)), y: Math.max(30, Math.min(300, at[1] + 10 + Math.random() * 50)) }); if (ch.length > 8) ch.shift(); beep(700); }
       if (d.r) ch = [];
-      rows();
-      draw();
+      rows(); draw();
     };
-
-    // 화면 좌표를 360×330 SVG 좌표로 변환
-    const pt = e => {
-      const p = svg.createSVGPoint();
-      p.x = e.clientX;
-      p.y = e.clientY;
-      return p.matrixTransform(svg.getScreenCTM().inverse());
-    };
-
-    // 가방·텀블러 손잡이의 전체 경로에서 커서와 가장 가까운 지점을 계산.
-    // 경로 샘플 점 중 하나를 고르는 대신, 샘플 사이 선분에 투영해 위치를 연속적으로 찾음.
-    const nearestHandlePoint = (x, y) => {
-      if (!isMejirushi) return null;
-
-      const item = c.items[it].a;
-      if (item !== 'bag' && item !== 'tum') return null;
-
-      const handles = svg.querySelectorAll('[data-snap-handle]');
-      const rootScreenMatrix = svg.getScreenCTM();
-      if (!rootScreenMatrix) return null;
-      const screenToRoot = rootScreenMatrix.inverse();
-
-      let nearest = null;
-
-      const toRootPoint = (handle, distance) => {
-        const local = handle.getPointAtLength(distance);
-        const screenMatrix = handle.getScreenCTM();
-        if (!screenMatrix) return null;
-
-        // screen 좌표를 거쳐 SVG viewBox 좌표로 변환해 drag 좌표계와 일치시킴.
-        const screenPoint = new DOMPoint(local.x, local.y).matrixTransform(screenMatrix);
-        const rootPoint = screenPoint.matrixTransform(screenToRoot);
-        return { x: rootPoint.x, y: rootPoint.y };
-      };
-
-      handles.forEach(handle => {
-        if (typeof handle.getTotalLength !== 'function' || typeof handle.getPointAtLength !== 'function') return;
-
-        const length = handle.getTotalLength();
-        if (!length) return;
-
-        // 약 2.5 SVG 단위 간격으로 경로를 표본화한 뒤, 각 선분에 정확히 투영.
-        const steps = Math.max(80, Math.ceil(length / 2.5));
-        let previous = toRootPoint(handle, 0);
-        if (!previous) return;
-
-        for (let i = 1; i <= steps; i++) {
-          const current = toRootPoint(handle, length * i / steps);
-          if (!current) {
-            previous = current;
-            continue;
-          }
-          if (!previous) {
-            previous = current;
-            continue;
-          }
-
-          const vx = current.x - previous.x;
-          const vy = current.y - previous.y;
-          const segmentLengthSquared = vx * vx + vy * vy;
-          const rawT = segmentLengthSquared === 0
-            ? 0
-            : ((x - previous.x) * vx + (y - previous.y) * vy) / segmentLengthSquared;
-          const t = Math.max(0, Math.min(1, rawT));
-          const targetX = previous.x + vx * t;
-          const targetY = previous.y + vy * t;
-          const distance = Math.hypot(targetX - x, targetY - y);
-
-          if (!nearest || distance < nearest.distance) {
-            nearest = { x: targetX, y: targetY, distance };
-          }
-
-          previous = current;
-        }
-      });
-
-      // 기존 48보다 인식 범위를 줄임. 가까운 손잡이 영역에 놓았을 때만 붙음.
-      const SNAP_RADIUS = 27;
-      return nearest && nearest.distance <= SNAP_RADIUS ? nearest : null;
-    };
-
+    const pt = e => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); };
     let drag = null;
-
-    svg.onpointerdown = e => {
-      const g = e.target.closest('.dg');
-      if (!g) return;
-
-      const p = ch.find(x => x.id == g.dataset.id);
-      if (!p) return;
-
-      const q = pt(e);
-      drag = {
-        p,
-        g,
-        ox: p.x - q.x,
-        oy: p.y - q.y,
-        pointerId: e.pointerId
-      };
-
-      // 잡는 즉시 손잡이 스냅을 해제해, 밖으로 드래그하면 자연스럽게 떨어지게 함.
-      p.snapped = false;
-      g.classList.remove('is-snapped');
-      g.style.transition = 'none';
-
-      if (svg.setPointerCapture) svg.setPointerCapture(e.pointerId);
-      ch.push(ch.splice(ch.indexOf(p), 1)[0]);
-      svg.appendChild(g);
-      g.classList.add('lift');
-      e.preventDefault();
-    };
-
-    svg.onpointermove = e => {
-      if (!drag) return;
-
-      const q = pt(e);
-      const p = drag.p;
-      p.x = Math.max(20, Math.min(340, q.x + drag.ox));
-      p.y = Math.max(20, Math.min(310, q.y + drag.oy));
-      drag.g.setAttribute('transform', `translate(${p.x} ${p.y})`);
-    };
-
-    const finishDrag = e => {
-      if (!drag) return;
-
-      const { p, g } = drag;
-      g.classList.remove('lift');
-
-      // 참을 놓는 순간, 현재 위치에서 가장 가까운 손잡이 선분의 어느 지점이든 타깃으로 삼음.
-      let snap = null;
-      if (isMejirushi && p.k.startsWith('charm:')) {
-        snap = nearestHandlePoint(p.x, p.y);
-      }
-
-      if (snap) {
-        p.x = snap.x;
-        p.y = snap.y;
-        p.snapped = true;
-        g.classList.add('is-snapped');
-        g.style.transition = 'transform 170ms cubic-bezier(.2,.75,.25,1), filter 170ms ease';
-        g.setAttribute('transform', `translate(${p.x} ${p.y})`);
-        beep(900);
-      } else {
-        // 손잡이 인식 반경 밖에 놓으면 고정되지 않고 그 자리에 자유롭게 남음.
-        p.snapped = false;
-        g.classList.remove('is-snapped');
-        g.style.transition = 'transform 120ms ease-out, filter 160ms ease';
-        g.setAttribute('transform', `translate(${p.x} ${p.y})`);
-      }
-
-      const finishedElement = g;
-      window.setTimeout(() => {
-        // 드래그가 끝난 요소의 임시 transition만 제거
-        if (finishedElement.isConnected) finishedElement.style.transition = '';
-      }, 210);
-
-      drag = null;
-    };
-
-    svg.onpointerup = finishDrag;
-    svg.onpointercancel = finishDrag;
-
-    // 더블클릭 제거도 짧은 축소·페이드 애니메이션으로 부드럽게 처리.
-    svg.ondblclick = e => {
-      const g = e.target.closest('.dg');
-      if (!g || g.classList.contains('removing')) return;
-
-      const itemId = Number(g.dataset.id);
-      g.classList.remove('lift', 'is-snapped');
-      g.classList.add('removing');
-
-      const removeAfterAnimation = () => {
-        ch = ch.filter(x => x.id !== itemId);
-        draw();
-      };
-
-      g.addEventListener('animationend', removeAfterAnimation, { once: true });
-      // CSS 애니메이션이 비활성화된 환경에서도 제거가 완료되도록 fallback 제공.
-      window.setTimeout(() => {
-        if (ch.some(x => x.id === itemId)) removeAfterAnimation();
-      }, 230);
-    };
-
-    rows();
-    draw();
+    svg.onpointerdown = e => { const g = e.target.closest('.dg'); if (!g) return; const p = ch.find(x => x.id == g.dataset.id), q = pt(e); drag = { p, g, ox: p.x - q.x, oy: p.y - q.y }; svg.setPointerCapture(e.pointerId); g.classList.add('lift'); ch.push(ch.splice(ch.indexOf(p), 1)[0]); svg.appendChild(g); };
+    svg.onpointermove = e => { if (!drag) return; const q = pt(e), p = drag.p; p.x = Math.max(20, Math.min(340, q.x + drag.ox)); p.y = Math.max(20, Math.min(310, q.y + drag.oy)); drag.g.setAttribute('transform', `translate(${p.x} ${p.y})`); };
+    svg.onpointerup = svg.onpointercancel = () => { if (drag) drag.g.classList.remove('lift'); drag = null; };
+    svg.ondblclick = e => { const g = e.target.closest('.dg'); if (g) { ch = ch.filter(x => x.id != g.dataset.id); draw(); } };
+    rows(); draw();
   },
 });
-
-
-/* ---------------- 패션 탭: 옥 카드 배경 이미지 ---------------- */
-(() => {
-  const JADE_CARD_IMAGE = 'https://uppity.co.kr/wp-content/uploads/2026/01/content-pixie-M_M6w-7ZBD0-unsplash-e1768911517247.jpg';
-  const APP_SELECTOR = '#app';
-
-  function isVisibleCardSize(element) {
-    const rect = element.getBoundingClientRect();
-    return rect.width >= 180 && rect.height >= 80;
-  }
-
-  function getJadeCard(title, app) {
-    let node = title.parentElement;
-    let fallback = null;
-
-    for (let depth = 0; node && node !== app && depth < 8; depth++, node = node.parentElement) {
-      if (!isVisibleCardSize(node)) continue;
-
-      const className = typeof node.className === 'string' ? node.className.toLowerCase() : '';
-      const tagName = node.tagName.toLowerCase();
-      const looksLikeInnerContent = /title|heading|header|content|body|text|label|description|copy/.test(className);
-      const hasCardName = /(^|[\s_-])(card|tile|trend|topic|item|entry|feature|panel)([\s_-]|$)/.test(className);
-      const semanticCard = ['article', 'li', 'button', 'a'].includes(tagName);
-
-      if (!looksLikeInnerContent && (hasCardName || semanticCard)) {
-        return node;
-      }
-
-      // 클래스 이름을 알 수 없는 프로젝트에서도 카드 내부에만 붙일 수 있도록
-      // 제목과 설명을 함께 포함하는 큰 컨테이너를 보조 후보로 둡니다.
-      const text = (node.innerText || node.textContent || '').replace(/\s+/g, ' ').trim();
-      const topicTitles = new Set(['메지루시', '젤리슈즈 꾸미기', '볼펜 꾸미기']);
-      const containsAnotherTopic = Array.from(
-        node.querySelectorAll('h1, h2, h3, h4, h5, h6, [class*="title"]')
-      ).some(titleNode => topicTitles.has((titleNode.textContent || '').trim()));
-
-      // 다른 트렌드 카드까지 포함하는 그리드가 아니라 옥 카드 범위 안에서만 후보를 갱신합니다.
-      if (text.includes('옥') && text.length < 500 && !containsAnotherTopic) {
-        fallback = node;
-      }
-    }
-
-    return fallback;
-  }
-
-  function applyJadeCardBackground() {
-    const app = document.querySelector(APP_SELECTOR);
-    if (!app) return false;
-
-    const possibleTitles = app.querySelectorAll(
-      'h1, h2, h3, h4, h5, h6, [class*="title"], [data-title], button, a, strong, b, span, p'
-    );
-
-    for (const element of possibleTitles) {
-      if ((element.textContent || '').trim() !== '옥') continue;
-
-      const card = getJadeCard(element, app);
-      if (!card) continue;
-
-      card.classList.add('jade-photo-card');
-      card.style.setProperty('--jade-card-image', `url("${JADE_CARD_IMAGE}")`);
-      return true;
-    }
-
-    return false;
-  }
-
-  function startJadeCardBackground() {
-    const app = document.querySelector(APP_SELECTOR);
-    if (!app) return;
-
-    applyJadeCardBackground();
-
-    // 메인 스크립트가 카드 목록을 나중에 그리거나 다시 만들 때도 적용합니다.
-    const observer = new MutationObserver(() => {
-      applyJadeCardBackground();
-    });
-
-    observer.observe(app, {
-      childList: true,
-      subtree: true
-    });
-
-    requestAnimationFrame(applyJadeCardBackground);
-    window.setTimeout(applyJadeCardBackground, 250);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startJadeCardBackground, { once: true });
-  } else {
-    startJadeCardBackground();
-  }
-})();
