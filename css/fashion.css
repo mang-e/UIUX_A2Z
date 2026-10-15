@@ -1,20 +1,89 @@
+/* A2Z 패션(fashion.html) 전용 스타일
+   style.css 다음에 불러와요.
+*/
 
-/* 메지루시 전용 장식 인터랙션 */
-
-.mj-scene {
-  overflow: visible;
+.sw {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 3px #fff8,
+    0 0 0 2px var(--g3);
 }
 
-.mj-charm {
-  cursor: grab;
-  touch-action: none;
+.sw.on {
+  box-shadow:
+    inset 0 0 0 3px #fff,
+    0 0 0 3px var(--paper);
+}
+
+.swy {
   transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: swy 2.2s ease-in-out infinite alternate;
 }
 
-.mj-charm.lift {
+.dgs {
+  touch-action: none;
+}
+
+.dg {
+  cursor: grab;
+  transition:
+    transform 170ms cubic-bezier(.2, .75, .25, 1),
+    filter 170ms ease;
+  will-change: transform, opacity;
+}
+
+.dg.lift {
   cursor: grabbing;
+  transition: none;
+  filter: drop-shadow(0 3px 3px #0002);
 }
 
-.mj-charm.is-snapped {
-  filter: drop-shadow(0 1px 1px rgba(25, 33, 39, 0.16));
+.dg.lift .swy {
+  animation-play-state: paused;
+}
+
+.dg.is-snapped {
+  filter: drop-shadow(0 1.5px 2px #0002);
+}
+
+.dg.is-snapped .swy {
+  animation-duration: 2.8s;
+}
+
+.dg.removing {
+  cursor: default;
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dg-remove 190ms cubic-bezier(.2, .7, .3, 1) forwards;
+}
+
+@keyframes swy {
+  from {
+    transform: rotate(-7deg);
+  }
+
+  to {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes dg-remove {
+  0% {
+    opacity: 1;
+    scale: 1;
+  }
+
+  65% {
+    opacity: .55;
+    scale: .72;
+  }
+
+  100% {
+    opacity: 0;
+    scale: .35;
+  }
 }
