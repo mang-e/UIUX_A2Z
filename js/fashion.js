@@ -44,34 +44,10 @@ const ART = {
 
 /* ---------------- 인터랙션 모듈 ---------------- */
 Object.assign(X, {
-  /* 옥: 옷을 고르고 옥 액세서리를 착용해 코디 */
+  /* 옥: (내용 비움 — 다시 작업 예정) */
   jade(st, bar) {
-    const TN = [['백옥', '#F2FBF6', '#CDEBDB', '#8FC4A9'], ['비취옥', '#C9F5E1', '#5FCFA0', '#1F8F65'], ['녹옥', '#8FDCB0', '#2FA06A', '#14603F'], ['자옥', '#EBDDFB', '#B79CFF', '#6E4FB5']];
-    const OF = [['블랙 니트', '#1C1C20'], ['화이트 셔츠', '#FEFEFE'], ['핑크 원피스', '#F9B8E0'], ['스카이 블라우스', '#9CCBF5']];
-    const MSG = ['검은 옷 위에서 옥빛이 가장 선명하게 살아나요.', '흰 셔츠에는 은은한 옥빛이 깔끔한 포인트가 돼요.', '핑크와 옥빛의 대비가 발랄한 분위기를 만들어요.', '하늘색과 옥빛이 시원한 한 쌍이에요.'];
-    const AC = [['neck', '목걸이'], ['wrist', '팔찌'], ['ear', '귀걸이'], ['ring', '반지']]; let ti = 1, of = 0; const on = { neck: true, wrist: true, ear: false, ring: false };
-    const skin = '#F2CDB5', J = 'url(#jg)';
-    st.innerHTML = '<svg id="sc" class="scene" viewBox="0 0 300 340"></svg><div class="say" id="say"></div>';
-    const draw = () => {
-      const t = TN[ti], o = OF[of][1], sleeve = of === 1 ? '#FEFEFE' : o;
-      const defs = `<defs><radialGradient id="jg" cx=".5" cy=".5" r=".7" fx=".3" fy=".25"><stop offset="0" stop-color="${t[1]}"/><stop offset=".55" stop-color="${t[2]}"/><stop offset="1" stop-color="${t[3]}"/></radialGradient></defs>`;
-      const line = of === 1 ? ' stroke="#B9BFC9" stroke-width="2"' : '';
-      let s = defs + `<rect x="136" y="128" width="28" height="52" fill="${skin}"/>`;
-      s += `<path d="M74 214L50 300" stroke="${sleeve}" stroke-width="34" stroke-linecap="round"/><path d="M226 214L250 300" stroke="${sleeve}" stroke-width="34" stroke-linecap="round"/><circle cx="46" cy="318" r="17" fill="${skin}"/><circle cx="254" cy="318" r="17" fill="${skin}"/>`;
-      s += `<path d="M56 340V262Q56 206 108 188L140 176H160L192 188Q244 206 244 262V340z" fill="${o}"${line}/>`;
-      s += of === 1 ? `<path d="M124 178L142 200L150 178zM176 178L158 200L150 178z" fill="#fff" stroke="#B9BFC9" stroke-width="2"/><circle cx="150" cy="226" r="3" fill="#B9BFC9"/><circle cx="150" cy="254" r="3" fill="#B9BFC9"/>` : `<path d="M124 182Q150 216 176 182L164 170H136z" fill="${skin}"/>`;
-      if (of === 0) s += '<path d="M100 220V340M124 214V340M176 214V340M200 220V340" stroke="#fff" stroke-opacity=".08" stroke-width="3"/>';
-      s += `<circle cx="150" cy="92" r="42" fill="${skin}"/><circle cx="108" cy="98" r="9" fill="${skin}"/><circle cx="192" cy="98" r="9" fill="${skin}"/><path d="M104 96C98 50 126 40 150 40S202 50 196 96C184 74 168 64 150 64S116 74 104 96z" fill="${K}"/><circle cx="134" cy="98" r="3" fill="${K}"/><circle cx="166" cy="98" r="3" fill="${K}"/><path d="M142 114q8 6 16 0" stroke="${K}" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="124" cy="108" r="5" fill="#F65AC2" opacity=".3"/><circle cx="176" cy="108" r="5" fill="#F65AC2" opacity=".3"/>`;
-      if (on.neck) s += `<path d="M133 158Q150 212 167 158" fill="none" stroke="${J}" stroke-width="5" stroke-linecap="round"/><circle cx="150" cy="186" r="11" fill="${J}"/><circle cx="150" cy="186" r="4" fill="${o === '#FEFEFE' ? skin : o}"/>`;
-      if (on.ear) s += `<path d="M108 106V114M192 106V114" stroke="#E8C65A" stroke-width="2"/><circle cx="108" cy="121" r="7" fill="${J}"/><circle cx="192" cy="121" r="7" fill="${J}"/>`;
-      if (on.wrist) s += `<ellipse cx="48" cy="306" rx="19" ry="7" fill="none" stroke="${J}" stroke-width="8"/>`;
-      if (on.ring) s += `<circle cx="254" cy="322" r="7" fill="none" stroke="${J}" stroke-width="4"/><ellipse cx="254" cy="316" rx="6" ry="4" fill="${J}"/>`;
-      $('#sc', st).innerHTML = s;
-      $('#say', st).textContent = `${OF[of][0]} × ${t[0]} — ${MSG[of]}`;
-    };
-    const rows = () => { bar.innerHTML = rowOf('옷', OF.map((o, i) => `<button class="chip${i === of ? ' on' : ''}" data-o="${i}">${o[0]}</button>`).join('')) + rowOf('옥빛', TN.map((t, i) => `<button class="chip${i === ti ? ' on' : ''}" data-t="${i}">${t[0]}</button>`).join('')) + rowOf('착용', AC.map(a => `<button class="chip${on[a[0]] ? ' on' : ''}" data-a="${a[0]}">${a[1]}</button>`).join('')); colBar(bar); };
-    bar.onclick = e => { const b = e.target.closest('.chip'); if (!b) return; const d = b.dataset; if (d.o) of = +d.o; if (d.t) ti = +d.t; if (d.a) on[d.a] = !on[d.a]; beep(600); rows(); draw(); };
-    rows(); draw();
+    st.innerHTML = '';
+    bar.innerHTML = '';
   },
 
   /* 메지루시 · 젤리슈즈 · 볼펜: 장식을 추가하고 드래그해서 배치 */
