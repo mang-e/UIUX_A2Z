@@ -151,3 +151,16 @@ Object.assign(X, {
   },
 });
  
+
+/* ---------------- 옥 카드 배경 이미지 ---------------- */
+(() => {
+  const URL = 'img/okk_img.jpg'; /* 깃허브 이미지 경로에 맞게 수정 */
+  const app = document.getElementById('app'); if (!app) return;
+  const apply = () => app.querySelectorAll('h1,h2,h3,h4').forEach(h => {
+    if (h.textContent.trim() !== '옥') return;
+    const c = h.closest('[class*="card"]') || h.parentElement;
+    if (!c || !/VIEW MORE/i.test(c.textContent) || c.classList.contains('jade-card-bg')) return;
+    c.style.setProperty('--jade-card-url', `url("${URL}")`); c.classList.add('jade-card-bg');
+  });
+  apply(); new MutationObserver(apply).observe(app, { childList: true, subtree: true });
+})();
