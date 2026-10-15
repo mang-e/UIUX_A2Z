@@ -18,13 +18,13 @@ T.food = [
   },
   { 
     t: '피자설기', type: 'pizza',
-    img: 'image/food-pizza.jpg', // 이미지 경로 추가
+    img: 'image/피자설기.jpg', // 이미지 경로 추가
     lead: '쫀득한 설기 떡 위에 피자 토핑을 올린 퓨전 간식이에요.',
     // ... 이하 생략
   },
   { 
     t: '라면 말려먹기', type: 'ramen',
-    img: 'image/food-ramen.jpg', // 이미지 경로 추가
+    img: 'image/라면말려먹기.jpg', // 이미지 경로 추가
     lead: '짜게 끓인 라면의 면을 접시에 말려 꼬들꼬들하게 먹는 방법이에요.',
     // ... 이하 생략
   },
