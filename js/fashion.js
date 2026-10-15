@@ -154,3 +154,20 @@ Object.assign(X, {
     rows(); draw();
   },
 });
+
+/* ---------------- 목록 카드 배경 이미지 (제목으로 카드를 찾아 적용) ---------------- */
+(() => {
+  const DIR = 'img/'; /* 깃허브 이미지 폴더 경로에 맞게 수정 */
+  const BG = { '옥': 'okk_img.jpg', '메지루시': 'mejirushi_img.jpg', '젤리슈즈 꾸미기': 'jelly_img.webp', '볼펜 꾸미기': 'pen_img.jpg' };
+  const apply = () => document.querySelectorAll('#app h1,#app h2,#app h3,#app h4').forEach(h => {
+    const f = BG[h.textContent.trim()];
+    const card = f && (h.closest('[class*="card"]') || h.parentElement);
+    if (!card || !/VIEW MORE/i.test(card.textContent) || card.classList.contains('jade-image-card-background')) return;
+    card.style.setProperty('--jade-image-card-url', `url("${DIR}${f}")`);
+    card.classList.add('jade-image-card-background');
+  });
+  const app = document.getElementById('app');
+  if (!app) return;
+  apply();
+  new MutationObserver(apply).observe(app, { childList: true, subtree: true });
+})();
