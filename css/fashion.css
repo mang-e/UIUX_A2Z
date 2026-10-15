@@ -1,20 +1,14 @@
-/* A2Z 패션(fashion.html) 전용 스타일
-   style.css 다음에 불러와요.
-*/
+/* A2Z 패션(fashion.html) 전용 스타일 — 코디 · 장식 꾸미기. style.css 다음에 불러와요. */
 
 .sw {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  box-shadow:
-    inset 0 0 0 3px #fff8,
-    0 0 0 2px var(--g3);
+  box-shadow: inset 0 0 0 3px #fff8, 0 0 0 2px var(--g3);
 }
 
 .sw.on {
-  box-shadow:
-    inset 0 0 0 3px #fff,
-    0 0 0 3px var(--paper);
+  box-shadow: inset 0 0 0 3px #fff, 0 0 0 3px var(--paper);
 }
 
 .swy {
@@ -29,9 +23,7 @@
 
 .dg {
   cursor: grab;
-  transition:
-    transform 170ms cubic-bezier(.2, .75, .25, 1),
-    filter 170ms ease;
+  transition: transform 170ms cubic-bezier(.2, .75, .25, 1), filter 170ms ease;
   will-change: transform, opacity;
 }
 
@@ -86,4 +78,22 @@
     opacity: 0;
     scale: .35;
   }
+}
+
+/* 옥 카드에만 원본 옥 사진을 배경으로 적용합니다.
+   어두운 글자 가독성을 유지하도록 왼쪽은 밝게, 오른쪽은 사진이 잘 보이게 처리합니다. */
+
+#app .jade-photo-card {
+  background-color: #f7f4ed;
+  background-image:
+    linear-gradient(
+      105deg,
+      rgba(250, 248, 243, 0.94) 0%,
+      rgba(250, 248, 243, 0.82) 44%,
+      rgba(250, 248, 243, 0.25) 100%
+    ),
+    var(--jade-card-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
