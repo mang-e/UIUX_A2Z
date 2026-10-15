@@ -1,0 +1,17 @@
+/* A2Z 먹거리(food.html) 전용 스타일 — 접시 · 피자 · 라면 체험. style.css 다음에 불러와요. */
+
+.plate{position:relative;width:min(300px,68vw,36vh);aspect-ratio:1;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 2px var(--ink),0 0 0 12px var(--paper),0 0 0 14px var(--ink);margin-bottom:26px}
+.plate .base{position:absolute;inset:7%;border-radius:50%;background:var(--b,#eee);box-shadow:inset 0 0 0 2px var(--ink)}
+.plate span{position:absolute;width:clamp(36px,7vw,54px);font-size:0;translate:-50% -50%;animation:pop .35s cubic-bezier(.2,1.6,.4,1)}
+.pc{position:absolute;width:clamp(46px,9vw,64px);translate:-50% -50%;transition:left .3s,top .3s}
+.pc.gone{animation:gone .3s forwards}
+.plate .base{inset:calc(7% + var(--s,0%))}
+.pz{width:min(320px,70vw)}
+.pz .sl{cursor:pointer}
+.rm{width:min(320px,80vw)}
+.stm{animation:stm 1.6s ease-in-out infinite alternate}
+.meter{width:min(300px,80%);height:12px;border-radius:99px;background:var(--paper);box-shadow:inset 0 0 0 2px var(--ink);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--pc);transition:width .3s}
+@keyframes pop{from{scale:0}}
+@keyframes gone{to{scale:0;opacity:0}}
+@keyframes stm{from{opacity:.2;transform:translateY(4px)}to{opacity:.9;transform:translateY(-4px)}}
