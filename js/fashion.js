@@ -152,115 +152,137 @@ Object.assign(X, {
 });
 
 
-/* ---------------- 패션 목록 카드: 옥 사진 배경 ----------------
-   상세 화면이 아니라 네 가지 트렌드 카드가 함께 보이는 목록 화면에서만
-   '옥' 카드에 이미지 레이어를 추가합니다.
+/* ---------------- 네 번째 이미지 카드 배경 ----------------
+   제목이 '옥'인지 확인하지 않고, 실제 카드 목록에서 네 번째 카드를 선택합니다.
+   페이지 카드가 늦게 생성되거나 다시 렌더링되어도 적용되도록 관찰합니다.
 */
 (() => {
-  'use strict';
-
+  const CARD_IMAGE_URL = 'https://uppity.co.kr/wp-content/uploads/2026/01/content-pixie-M_M6w-7ZBD0-unsplash-e1768911517247.jpg';
   const ROOT_SELECTOR = '#app';
-  const JADE_TITLE = '옥';
-  const OVERVIEW_TITLES = ['옥', '메지루시', '젤리슈즈 꾸미기', '볼펜 꾸미기'];
-  const CARD_CLASS = 'jade-overview-photo-card';
-  const LAYER_CLASS = 'jade-overview-photo-layer';
 
-  const normalize = value => (value || '').replace(/\s+/g, ' ').trim();
+  const CARD_SELECTORS = [
+    '.image-card',
+    '.imageCard',
+    '.visual-card',
+    '.visualCard',
+    '.trend-card',
+    '.trendCard',
+    '.topic-card',
+    '.topicCard',
+    '.feature-card',
+    '.featureCard',
+    '[data-card-type="image"]',
+    '[data-image-card]',
+    '[data-card]',
+    '[class*="card"]',
+    '[class*="Card"]',
+    '[class*="trend"]',
+    '[class*="Trend"]',
+    '[class*="tile"]',
+    '[class*="Tile"]',
+    '.card',
+    'article',
+    'a.card',
+    'button.card'
+  ];
 
-  function titlesInside(element) {
-    const found = new Set();
-    if (!element) return found;
+  function getFourthCardFromSelector(root, selector) {
+    let nodes;
 
-    const nodes = [element, ...element.querySelectorAll('*')];
-    for (const node of nodes) {
-      const text = normalize(node.textContent);
-      if (OVERVIEW_TITLES.includes(text)) found.add(text);
+    try {
+      nodes = Array.from(root.querySelectorAll(selector));
+    } catch (_) {
+      return null;
     }
-    return found;
-  }
 
-  function findJadeOverviewCard(root) {
-    // 제목 텍스트가 정확히 '옥'인 요소를 출발점으로 사용합니다.
-    const candidates = Array.from(root.querySelectorAll('*')).filter(
-      element => normalize(element.textContent) === JADE_TITLE
-    );
+    // 작은 버튼이나 목록 바깥 래퍼를 카드로 계산하지 않도록 형제 카드끼리 묶습니다.
+    const usable = nodes.filter(el => {
+      const rect = el.getBoundingClientRect();
+      const text = (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
 
-    for (const titleNode of candidates) {
-      let ancestor = titleNode;
+      return rect.width >= 180 && rect.height >= 140 && text.length > 0;
+    });
 
-      while (ancestor && ancestor !== root) {
-        const parent = ancestor.parentElement;
-        if (!parent) break;
+    const byParent = new Map();
 
-        // 네 개의 트렌드 제목이 각각 다른 형제 카드 안에 있을 때만
-        // 이를 목록 카드 그리드로 판단합니다. 상세 페이지에서는 조건을 만족하지 않습니다.
-        const cardChildren = Array.from(parent.children).map(element => ({
-          element,
-          titles: titlesInside(element)
-        })).filter(item => item.titles.size === 1);
+    usable.forEach(el => {
+      const parent = el.parentElement;
+      if (!parent) return;
 
-        const titleSet = new Set(
-          cardChildren.map(item => Array.from(item.titles)[0])
-        );
+      if (!byParent.has(parent)) {
+        byParent.set(parent, new Map());
+      }
 
-        const isOverviewGrid = OVERVIEW_TITLES.every(title => titleSet.has(title));
-        if (isOverviewGrid) {
-          const jadeCards = cardChildren.filter(item => item.titles.has(JADE_TITLE));
-          if (jadeCards.length === 1) return jadeCards[0].element;
+      const byTag = byParent.get(parent);
+      const key = el.tagName.toLowerCase();
+
+      if (!byTag.has(key)) {
+        byTag.set(key, []);
+      }
+
+      byTag.get(key).push(el);
+    });
+
+    for (const byTag of byParent.values()) {
+      for (const siblings of byTag.values()) {
+        if (siblings.length >= 4) {
+          return siblings[3];
         }
-
-        ancestor = parent;
       }
     }
 
     return null;
   }
 
-  function applyJadeOverviewImage() {
+  function applyToFourthImageCard() {
     const root = document.querySelector(ROOT_SELECTOR);
-    if (!root) return;
+    if (!root) return false;
 
-    const target = findJadeOverviewCard(root);
+    for (const selector of CARD_SELECTORS) {
+      const target = getFourthCardFromSelector(root, selector);
+      if (!target) continue;
 
-    // 카드 목록이 사라지거나 화면이 상세 보기로 전환되면 목록 전용 이미지를 제거합니다.
-    root.querySelectorAll('.' + CARD_CLASS).forEach(card => {
-      if (card === target) return;
-      card.classList.remove(CARD_CLASS);
-      const layer = card.querySelector(':scope > .' + LAYER_CLASS);
-      if (layer) layer.remove();
-    });
+      // 재렌더링되더라도 이전 카드에는 배경이 남지 않도록 제거합니다.
+      root.querySelectorAll('.jade-image-card-background').forEach(previous => {
+        if (previous !== target) {
+          previous.classList.remove('jade-image-card-background');
+          previous.style.removeProperty('--jade-image-card-url');
+        }
+      });
 
-    if (!target) return;
+      target.classList.add('jade-image-card-background');
+      target.style.setProperty(
+        '--jade-image-card-url',
+        `url("${CARD_IMAGE_URL}")`
+      );
 
-    target.classList.add(CARD_CLASS);
-
-    // 기존 카드의 테두리 및 hover 스타일과 충돌하지 않도록 별도의 이미지 레이어를 만듭니다.
-    let layer = target.querySelector(':scope > .' + LAYER_CLASS);
-    if (!layer) {
-      layer = document.createElement('div');
-      layer.className = LAYER_CLASS;
-      layer.setAttribute('aria-hidden', 'true');
-      target.insertBefore(layer, target.firstChild);
+      return true;
     }
+
+    return false;
   }
 
-  function initJadeOverviewImage() {
+  function initFourthCardBackground() {
     const root = document.querySelector(ROOT_SELECTOR);
     if (!root) return;
 
-    applyJadeOverviewImage();
+    applyToFourthImageCard();
 
-    // 공통 스크립트가 카드 목록을 나중에 렌더링하거나 다시 그리는 경우도 처리합니다.
-    const observer = new MutationObserver(applyJadeOverviewImage);
-    observer.observe(root, { childList: true, subtree: true });
+    const observer = new MutationObserver(() => {
+      applyToFourthImageCard();
+    });
 
-    requestAnimationFrame(applyJadeOverviewImage);
-    window.setTimeout(applyJadeOverviewImage, 200);
+    observer.observe(root, {
+      childList: true,
+      subtree: true
+    });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initJadeOverviewImage, { once: true });
+    document.addEventListener('DOMContentLoaded', initFourthCardBackground, {
+      once: true
+    });
   } else {
-    initJadeOverviewImage();
+    initFourthCardBackground();
   }
 })();
