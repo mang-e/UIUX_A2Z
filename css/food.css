@@ -15,24 +15,3 @@
 @keyframes pop{from{scale:0}}
 @keyframes gone{to{scale:0;opacity:0}}
 @keyframes stm{from{opacity:.2;transform:translateY(4px)}to{opacity:.9;transform:translateY(-4px)}}
-
-/* 먹거리 카드의 이미지 영역 스타일 */
-.card-image {
-  width: 100%;
-  height: 180px; /* 원하는 카드 이미지 높이 지정 */
-  overflow: hidden;
-  border-radius: 12px 12px 0 0; /* 상단 모서리 둥글게 */
-  background: var(--paper);
-}
-
-.card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* 이미지가 찌그러지지 않고 영역을 채우도록 설정 */
-  transition: transform 0.3s ease;
-}
-
-/* 마우스 호버 시 이미지가 살짝 확대되는 인터랙션 (선택사항) */
-.card:hover .card-image img {
-  transform: scale(1.05);
-}
