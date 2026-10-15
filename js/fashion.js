@@ -1,6 +1,10 @@
-/* A2Z 패션(fashion.html) 전용 스크립트 — 트렌드 데이터 · 체험 모듈(옥/메지루시/젤리슈즈/볼펜). js/script.js 다음에 불러와요. */
+/* A2Z 패션(fashion.html) 전용 스크립트
+   트렌드 데이터 · 체험 모듈(옥/메지루시/젤리슈즈/볼펜)
+   js/script.js 다음에 불러와요.
+*/
 
 /* ---------------- 트렌드 데이터 ---------------- */
+
 T.fashion = [
   {
     t: '옥',
@@ -110,7 +114,7 @@ const ART = {
   `,
 
   bag: c => `
-    <!-- 손잡이 전체 경로: 이 경로를 따라 어느 곳에서든 스냅 -->
+    <!-- 가방 손잡이 전체 경로 -->
     <path
       data-snap-handle="bag"
       d="M130 120Q130 52 180 52T230 120"
@@ -120,7 +124,6 @@ const ART = {
       fill="none"
     />
 
-    <!-- 손잡이 안쪽 라인 -->
     <path
       d="M137 116Q137 64 180 64T223 116"
       stroke="#fff"
@@ -139,7 +142,6 @@ const ART = {
       fill="${c}"
     />
 
-    <!-- 가방 윗부분과 봉제 디테일 -->
     <path
       d="M98 128H262"
       stroke="#fff"
@@ -163,7 +165,6 @@ const ART = {
       stroke-width="2"
     />
 
-    <!-- 앞주머니 -->
     <rect
       x="125"
       y="200"
@@ -207,7 +208,6 @@ const ART = {
       fill-opacity=".18"
     />
 
-    <!-- 뚜껑 윗부분 -->
     <rect
       x="170"
       y="30"
@@ -237,7 +237,7 @@ const ART = {
       fill-opacity=".08"
     />
 
-    <!-- 손잡이 전체 경로: 경로 어디에서든 스냅 -->
+    <!-- 텀블러 손잡이 전체 경로 -->
     <path
       data-snap-handle="tum"
       d="M244 130H276q26 0 26 28v10q0 28-26 28H238"
@@ -248,7 +248,6 @@ const ART = {
       fill="none"
     />
 
-    <!-- 손잡이 안쪽 디테일 -->
     <path
       d="M249 138H276q17 0 17 20v10q0 20-17 20H243"
       stroke="#fff"
@@ -257,7 +256,6 @@ const ART = {
       fill="none"
     />
 
-    <!-- 몸체 반사광 -->
     <path
       d="M140 110L148 270"
       stroke="#fff"
@@ -521,6 +519,7 @@ Object.assign(X, {
 
       for (let j = 0; j <= 72; j++) {
         const q = pt(U * j / 72);
+
         path += (j ? 'L' : 'M') +
           q[0].toFixed(1) + ' ' +
           q[1].toFixed(1);
@@ -706,6 +705,7 @@ Object.assign(X, {
 
 
   /* ---------------- 메지루시 · 젤리슈즈 · 볼펜 꾸미기 ---------------- */
+
   decor(st, bar, c) {
     let it = 0;
     let col = 0;
@@ -723,8 +723,9 @@ Object.assign(X, {
         style="touch-action:none"
       ></svg>
       <p class="hint">
-        장식을 추가한 뒤 드래그해서 원하는 곳에 놓아보세요 ·
-        장식을 더블클릭하면 떼어낼 수 있어요
+        장식을 추가한 뒤 드래그해서 원하는 곳에 놓아보세요.
+        붙은 참은 잡고 밖으로 드래그하면 떼어낼 수 있고,
+        더블클릭하면 부드럽게 제거돼요.
       </p>
     `;
 
@@ -781,7 +782,7 @@ Object.assign(X, {
           )
         : '';
 
-      // 메지루시는 장식 색상 선택을 표시하지 않음
+      // 메지루시에서는 장식 색상 선택을 표시하지 않음.
       const colorRow = isMejirushi
         ? ''
         : rowOf(
@@ -859,7 +860,8 @@ Object.assign(X, {
       draw();
     };
 
-    // 화면 좌표를 360 × 330 SVG 좌표로 변환
+
+    // 화면 좌표를 SVG viewBox 좌표로 변환.
     const pt = e => {
       const p = svg.createSVGPoint();
 
@@ -871,9 +873,14 @@ Object.assign(X, {
 
 
     /*
-     * 가방·텀블러 손잡이 경로 전체를 탐색합니다.
-     * 지정된 몇 개의 좌표만 검사하지 않고 손잡이의 곡선과
-     * 직선 전 구간에서 가장 가까운 위치를 찾습니다.
+     * 손잡이 경로 전체에서 가장 가까운 지점을 계산합니다.
+     *
+     * 1. 경로 좌표를 화면 좌표로 변환합니다.
+     * 2. 화면 좌표를 다시 루트 SVG 좌표로 변환합니다.
+     * 3. 경로를 여러 선분으로 나눕니다.
+     * 4. 모든 선분에 드래그 중인 장식의 위치를 투영합니다.
+     *
+     * 단순히 미리 지정된 좌표 중 하나를 고르는 방식이 아닙니다.
      */
     const nearestHandlePoint = (x, y) => {
       if (!isMejirushi) return null;
@@ -885,8 +892,32 @@ Object.assign(X, {
       }
 
       const handles = svg.querySelectorAll('[data-snap-handle]');
+      const rootScreenMatrix = svg.getScreenCTM();
+
+      if (!rootScreenMatrix) return null;
+
+      const screenToRoot = rootScreenMatrix.inverse();
 
       let nearest = null;
+
+      const toRootPoint = (handle, distance) => {
+        const local = handle.getPointAtLength(distance);
+        const screenMatrix = handle.getScreenCTM();
+
+        if (!screenMatrix) return null;
+
+        const screenPoint = new DOMPoint(
+          local.x,
+          local.y
+        ).matrixTransform(screenMatrix);
+
+        const rootPoint = screenPoint.matrixTransform(screenToRoot);
+
+        return {
+          x: rootPoint.x,
+          y: rootPoint.y
+        };
+      };
 
       handles.forEach(handle => {
         if (
@@ -897,42 +928,68 @@ Object.assign(X, {
         }
 
         const length = handle.getTotalLength();
-        const matrix = handle.getCTM();
 
-        if (!length || !matrix) return;
+        if (!length) return;
 
-        // 경로 전체를 촘촘하게 검사
-        const steps = Math.max(120, Math.ceil(length * 2));
+        // 약 2.5 SVG 단위 간격으로 경로를 검사.
+        const steps = Math.max(80, Math.ceil(length / 2.5));
 
-        for (let i = 0; i <= steps; i++) {
-          const local = handle.getPointAtLength(length * i / steps);
+        let previous = toRootPoint(handle, 0);
 
-          const root = new DOMPoint(
-            local.x,
-            local.y
-          ).matrixTransform(matrix);
+        if (!previous) return;
+
+        for (let i = 1; i <= steps; i++) {
+          const current = toRootPoint(handle, length * i / steps);
+
+          if (!current) {
+            previous = current;
+            continue;
+          }
+
+          if (!previous) {
+            previous = current;
+            continue;
+          }
+
+          const vx = current.x - previous.x;
+          const vy = current.y - previous.y;
+
+          const segmentLengthSquared = vx * vx + vy * vy;
+
+          // 현재 위치를 이 선분에 투영할 위치 계산.
+          const rawT = segmentLengthSquared === 0
+            ? 0
+            : (
+                (x - previous.x) * vx +
+                (y - previous.y) * vy
+              ) / segmentLengthSquared;
+
+          const t = Math.max(0, Math.min(1, rawT));
+
+          const targetX = previous.x + vx * t;
+          const targetY = previous.y + vy * t;
 
           const distance = Math.hypot(
-            root.x - x,
-            root.y - y
+            targetX - x,
+            targetY - y
           );
 
           if (!nearest || distance < nearest.distance) {
             nearest = {
-              x: root.x,
-              y: root.y,
+              x: targetX,
+              y: targetY,
               distance
             };
           }
+
+          previous = current;
         }
       });
 
-      /*
-       * 손잡이 경로에서 48 SVG 단위 이내에 놓으면 스냅.
-       * 경로 전체를 검사하므로 손잡이 시작점·끝점·곡선 부분
-       * 어디에 가까이 놓아도 동일하게 작동합니다.
-       */
-      return nearest && nearest.distance <= 48
+      // 인식 범위를 이전 48에서 27 SVG 단위로 줄임.
+      const SNAP_RADIUS = 27;
+
+      return nearest && nearest.distance <= SNAP_RADIUS
         ? nearest
         : null;
     };
@@ -959,13 +1016,19 @@ Object.assign(X, {
         pointerId: e.pointerId
       };
 
-      // 기존에 붙어 있던 장식도 다시 드래그할 수 있음
+      // 잡는 즉시 스냅을 해제해 자유롭게 움직일 수 있게 함.
       p.snapped = false;
+
       g.classList.remove('is-snapped');
 
-      svg.setPointerCapture(e.pointerId);
+      // 드래그하는 동안에는 위치 변화가 마우스를 따라오도록 전환을 끔.
+      g.style.transition = 'none';
 
-      // 드래그 중인 장식을 가장 앞으로 이동
+      if (svg.setPointerCapture) {
+        svg.setPointerCapture(e.pointerId);
+      }
+
+      // 드래그 중인 장식을 가장 앞으로 이동.
       ch.push(ch.splice(ch.indexOf(p), 1)[0]);
       svg.appendChild(g);
 
@@ -996,60 +1059,102 @@ Object.assign(X, {
       );
     };
 
-    svg.onpointerup = e => {
+
+    const finishDrag = e => {
       if (!drag) return;
 
       const { p, g } = drag;
 
       g.classList.remove('lift');
 
-      /*
-       * 메지루시 참을 가방 또는 텀블러에 놓았을 때만 스냅.
-       * 손잡이의 특정 고정 좌표가 아닌 가장 가까운 경로 지점을 사용.
-       */
+      // 참을 놓는 순간 가장 가까운 손잡이 선분의 위치를 찾음.
+      let snap = null;
+
       if (isMejirushi && p.k.startsWith('charm:')) {
-        const snap = nearestHandlePoint(p.x, p.y);
+        snap = nearestHandlePoint(p.x, p.y);
+      }
 
-        if (snap) {
-          p.x = snap.x;
-          p.y = snap.y;
-          p.snapped = true;
+      if (snap) {
+        // 손잡이에서 가장 가까운 연속 좌표로 이동.
+        p.x = snap.x;
+        p.y = snap.y;
+        p.snapped = true;
 
-          g.setAttribute(
-            'transform',
-            `translate(${p.x} ${p.y})`
-          );
+        g.classList.add('is-snapped');
 
-          g.classList.add('is-snapped');
+        // 손잡이에 붙는 마지막 이동을 짧게 부드럽게 처리.
+        g.style.transition =
+          'transform 170ms cubic-bezier(.2,.75,.25,1), filter 170ms ease';
 
-          beep(900);
+        g.setAttribute(
+          'transform',
+          `translate(${p.x} ${p.y})`
+        );
+
+        beep(900);
+      } else {
+        // 인식 범위 밖에서는 고정하지 않고 자유로운 위치를 유지.
+        p.snapped = false;
+
+        g.classList.remove('is-snapped');
+
+        g.style.transition =
+          'transform 120ms ease-out, filter 160ms ease';
+
+        g.setAttribute(
+          'transform',
+          `translate(${p.x} ${p.y})`
+        );
+      }
+
+      const finishedElement = g;
+
+      window.setTimeout(() => {
+        if (finishedElement.isConnected) {
+          finishedElement.style.transition = '';
         }
-      }
+      }, 210);
 
       drag = null;
     };
 
-    svg.onpointercancel = () => {
-      if (drag) {
-        drag.g.classList.remove('lift');
-      }
+    svg.onpointerup = finishDrag;
+    svg.onpointercancel = finishDrag;
 
-      drag = null;
-    };
 
-    // 더블클릭하면 해당 장식을 제거
+    // 더블클릭 제거도 축소·페이드 애니메이션으로 부드럽게 처리.
     svg.ondblclick = e => {
       const g = e.target.closest('.dg');
 
-      if (!g) return;
+      if (!g || g.classList.contains('removing')) {
+        return;
+      }
 
-      ch = ch.filter(x => x.id != g.dataset.id);
+      const itemId = Number(g.dataset.id);
 
-      draw();
+      g.classList.remove('lift', 'is-snapped');
+      g.classList.add('removing');
+
+      const removeAfterAnimation = () => {
+        ch = ch.filter(x => x.id !== itemId);
+        draw();
+      };
+
+      g.addEventListener(
+        'animationend',
+        removeAfterAnimation,
+        { once: true }
+      );
+
+      // 애니메이션이 비활성화된 경우에도 제거가 완료되도록 처리.
+      window.setTimeout(() => {
+        if (ch.some(x => x.id === itemId)) {
+          removeAfterAnimation();
+        }
+      }, 230);
     };
 
     rows();
     draw();
   }
-
 });
