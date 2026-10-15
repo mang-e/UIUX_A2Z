@@ -1,4 +1,3 @@
-
 /* 메지루시 전용 장식 인터랙션 */
 
 .mj-scene {
@@ -17,4 +16,21 @@
 
 .mj-charm.is-snapped {
   filter: drop-shadow(0 1px 1px rgba(25, 33, 39, 0.16));
+}
+
+/* 옥 사진은 네 번째 카드의 배경으로만 적용 */
+
+#app .jade-image-card-background {
+  background-color: #f5f1eb !important;
+  background-image:
+    linear-gradient(
+      105deg,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 255, 255, 0.48) 48%,
+      rgba(255, 255, 255, 0.12) 100%
+    ),
+    var(--jade-image-card-url) !important;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
