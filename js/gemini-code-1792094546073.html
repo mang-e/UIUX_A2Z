@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D 탱글 (Tangle) 피젯</title>
+    <!-- SUIT Variable Font -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js r128 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --ink: #1C1C20;
+            --paper: #FEFEFE;
+            --g1: #E1E5EA;
+            --r-pill: 38px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+            font-family: 'SUIT Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        }
+
+        body, html {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #fcfbf7;
+        }
+
+        .a2z-btn {
+            background-color: var(--paper);
+            color: var(--ink);
+            border: 2px solid var(--ink);
+            border-radius: var(--r-pill);
+            font-weight: 800;
+            transition: all 0.15s ease;
+        }
+
+        .a2z-btn:hover {
+            background-color: var(--g1);
+        }
+
+        .a2z-btn.active {
+            background-color: var(--ink);
+            color: var(--paper);
+        }
+
+        #webgl-canvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            cursor: grab;
+        }
+
+        #webgl-canvas:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- 3D Full Screen WebGL Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- 상단 재질 선택 탭 UI -->
+    <div class="absolute top-6 left-0 right-0 z-20 flex justify-center pointer-events-none px-4">
+        <div class="pointer-events-auto flex bg-[#FEFEFE] border-2 border-[#1C1C20] rounded-full p-1 shadow-sm gap-1">
+            <button id="mat-opaque" onclick="setMaterialType('opaque')" class="a2z-btn active px-6 py-2 text-xs md:text-sm">
+                불투명
+            </button>
+            <button id="mat-transparent" onclick="setMaterialType('transparent')" class="a2z-btn px-6 py-2 text-xs md:text-sm">
+                투명
+            </button>
+            <button id="mat-metallic" onclick="setMaterialType('metallic')" class="a2z-btn px-6 py-2 text-xs md:text-sm">
+                메탈릭
+            </button>
+        </div>
+    </div>
+
+    <!-- 우측 하단 소리 토글 버튼 -->
+    <div class="absolute bottom-6 right-6 z-20 flex gap-3">
+        <button id="btn-sound" onclick="toggleSound()" title="음향 설정" class="w-12 h-12 rounded-full border-2 border-[#1C1C20] bg-[#FEFEFE] text-[#1C1C20] flex items-center justify-center hover:bg-[#1C1C20] hover:text-white transition-all shadow-sm">
+            <i id="sound-icon" class="fa-solid fa-volume-high text-lg"></i>
+        </button>
+    </div>
+
+    <script>
+        /* =========================================================================
+           1. 탱글 오디오 엔진 (실감 나는 플라스틱 관절 달그닥 소리)
+           ========================================================================= */
+        class TangleAudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+                this.lastSoundTime = 0;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playClack(intensity = 1.0) {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+
+                if (now - this.lastSoundTime < 0.04) return;
+                this.lastSoundTime = now;
+
+                const t = now;
+                const vol = Math.min(0.8, 0.4 * intensity);
+
+                const bufSize = this.ctx.sampleRate * 0.012;
+                const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+                const data = buf.getChannelData(0);
+                for (let i = 0; i < bufSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const src = this.ctx.createBufferSource();
+                const filter = this.ctx.createBiquadFilter();
+                const gain = this.ctx.createGain();
+
+                src.buffer = buf;
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(2800 + Math.random() * 400, t);
+                filter.Q.setValueAtTime(6.0, t);
+
+                gain.gain.setValueAtTime(vol, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.011);
+
+                src.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                src.start(t);
+                src.stop(t + 0.012);
+
+                const osc = this.ctx.createOscillator();
+                const oscGain = this.ctx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(750, t);
+                osc.frequency.exponentialRampToValueAtTime(180, t + 0.016);
+
+                oscGain.gain.setValueAtTime(vol * 0.5, t);
+                oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.016);
+
+                osc.connect(oscGain);
+                oscGain.connect(this.ctx.destination);
+
+                osc.start(t);
+                osc.stop(t + 0.018);
+            }
+        }
+
+        const soundEngine = new TangleAudioEngine();
+
+        /* =========================================================================
+           2. 3D 물리 시뮬레이션 및 메쉬 생성 (Three.js)
+           ========================================================================= */
+        let scene, camera, renderer;
+        const NUM_NODES = 20; // 20개의 마디로 구성된 무한 고리
+        const LINK_REST_LENGTH = 0.38; // 마디 간 기본 거리
+        const TUBE_RADIUS = 0.092;
+
+        let nodes = [];
+        let velHistory = [];
+        let segmentMeshes = [];
+
+        let currentMaterialType = 'opaque'; // 'opaque', 'transparent', 'metallic'
+
+        // 인터랙션 상태
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+        let draggedNodeIndex = -1;
+        let isDragging = false;
+        let dragPlane = new THREE.Plane();
+        let planeIntersect = new THREE.Vector3();
+
+        // 불투명 2색 정밀 컬러 (선명하고 또렷한 파스텔 핑크 & 스카이블루)
+        const OPAQUE_PINK = 0xf06292;
+        const OPAQUE_SKYBLUE = 0x4fc3f7;
+
+        // 투명 & 메탈릭 컬러 (또렷한 비비드 투명 핑크 & 핫핑크 메탈릭)
+        const SINGLE_PINK_TRANSPARENT = 0xff2a6d;
+        const SINGLE_HOT_PINK_METALLIC = 0xff007f;
+
+        function init3D() {
+            const canvas = document.getElementById('webgl-canvas');
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xfcfbf7);
+
+            camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 0, 5.5);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            // 스튜디오 풍부한 조명
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+            scene.add(ambientLight);
+
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.9);
+            dirLight1.position.set(5, 8, 6);
+            dirLight1.castShadow = true;
+            dirLight1.shadow.mapSize.width = 1024;
+            dirLight1.shadow.mapSize.height = 1024;
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0xfff0f5, 0.65);
+            dirLight2.position.set(-5, -2, -3);
+            scene.add(dirLight2);
+
+            // 보석 및 메탈릭 반사를 위한 포인트 조명
+            const pointLight1 = new THREE.PointLight(0xffffff, 1.0, 10);
+            pointLight1.position.set(2, 3, 4);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0xffffff, 0.7, 10);
+            pointLight2.position.set(-3, -1, 3);
+            scene.add(pointLight2);
+
+            buildClosedLoopTangle();
+            setupEventListeners();
+            animate();
+        }
+
+        /* -------------------------------------------------------------------------
+           재질 생성 함수
+           ------------------------------------------------------------------------- */
+        function createMaterialForIndex(index, type) {
+            if (type === 'transparent') {
+                return new THREE.MeshPhysicalMaterial({
+                    color: SINGLE_PINK_TRANSPARENT,
+                    roughness: 0.08,
+                    metalness: 0.0,
+                    transmission: 0.72,
+                    opacity: 0.95,
+                    transparent: true,
+                    clearcoat: 1.0,
+                    clearcoatRoughness: 0.03,
+                    ior: 1.48,
+                    reflectivity: 0.92
+                });
+            } else if (type === 'metallic') {
+                return new THREE.MeshStandardMaterial({
+                    color: SINGLE_HOT_PINK_METALLIC,
+                    roughness: 0.15,
+                    metalness: 0.88
+                });
+            } else {
+                const color = (index % 2 === 0) ? OPAQUE_PINK : OPAQUE_SKYBLUE;
+                return new THREE.MeshPhysicalMaterial({
+                    color: color,
+                    roughness: 0.25,
+                    metalness: 0.0,
+                    clearcoat: 0.4,
+                    clearcoatRoughness: 0.1,
+                    transparent: false,
+                    opacity: 1.0
+                });
+            }
+        }
+
+        /* -------------------------------------------------------------------------
+           3D 닫힌 고리 (Closed Loop) 생성
+           ------------------------------------------------------------------------- */
+        function buildClosedLoopTangle() {
+            nodes = [];
+            velHistory = [];
+            segmentMeshes = [];
+
+            for (let i = 0; i < NUM_NODES; i++) {
+                const t = (i / NUM_NODES) * Math.PI * 2;
+                const R = 1.25;
+                const rWave = 0.45;
+
+                const x = (R + rWave * Math.cos(3 * t)) * Math.cos(t);
+                const y = (R + rWave * Math.cos(3 * t)) * Math.sin(t);
+                const z = rWave * Math.sin(3 * t);
+
+                nodes.push(new THREE.Vector3(x, y, z));
+                velHistory.push(new THREE.Vector3(0, 0, 0));
+            }
+
+            for (let i = 0; i < NUM_NODES; i++) {
+                const mat = createMaterialForIndex(i, currentMaterialType);
+                const segMesh = new THREE.Mesh(new THREE.BufferGeometry(), mat);
+                segMesh.castShadow = true;
+                segMesh.receiveShadow = true;
+                segMesh.userData = { index: i };
+                scene.add(segMesh);
+                segmentMeshes.push(segMesh);
+            }
+
+            updateTangleMeshGeometries();
+        }
+
+        /* -------------------------------------------------------------------------
+           재질 타입 변경 탭 이벤트 handler
+           ------------------------------------------------------------------------- */
+        function setMaterialType(type) {
+            currentMaterialType = type;
+
+            ['opaque', 'transparent', 'metallic'].forEach(t => {
+                const btn = document.getElementById(`mat-${t}`);
+                if (t === type) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            for (let i = 0; i < NUM_NODES; i++) {
+                if (segmentMeshes[i].material) segmentMeshes[i].material.dispose();
+                segmentMeshes[i].material = createMaterialForIndex(i, currentMaterialType);
+            }
+        }
+
+        /* -------------------------------------------------------------------------
+           음향 켜기/끄기 토글
+           ------------------------------------------------------------------------- */
+        function toggleSound() {
+            soundEngine.enabled = !soundEngine.enabled;
+            const soundIcon = document.getElementById('sound-icon');
+            if (soundEngine.enabled) {
+                soundIcon.className = 'fa-solid fa-volume-high text-lg';
+            } else {
+                soundIcon.className = 'fa-solid fa-volume-xmark text-lg text-red-500';
+            }
+        }
+
+        /* -------------------------------------------------------------------------
+           마디 노드 위치에 맞춰 매끈한 3D 튜브 최신화
+           ------------------------------------------------------------------------- */
+        function updateTangleMeshGeometries() {
+            const closedCurve = new THREE.CatmullRomCurve3(nodes, true, 'catmullrom', 0.5);
+
+            for (let i = 0; i < NUM_NODES; i++) {
+                const tStart = i / NUM_NODES;
+                const tEnd = (i + 1) / NUM_NODES;
+
+                const subPts = [];
+                const samples = 12;
+                for (let s = 0; s <= samples; s++) {
+                    const t = tStart + (s / samples) * (tEnd - tStart);
+                    subPts.push(closedCurve.getPoint(t));
+                }
+                const subCurve = new THREE.CatmullRomCurve3(subPts);
+                
+                if (segmentMeshes[i].geometry) segmentMeshes[i].geometry.dispose();
+                segmentMeshes[i].geometry = new THREE.TubeGeometry(subCurve, 14, TUBE_RADIUS, 18, false);
+            }
+        }
+
+        /* -------------------------------------------------------------------------
+           물리 연산 (Position-Based Dynamics & Natural Friction Damping)
+           ------------------------------------------------------------------------- */
+        function solvePhysics() {
+            const friction = 0.91;
+
+            for (let i = 0; i < NUM_NODES; i++) {
+                if (i === draggedNodeIndex && isDragging) continue;
+
+                nodes[i].add(velHistory[i]);
+                velHistory[i].multiplyScalar(friction);
+            }
+
+            const iterations = 12;
+            for (let iter = 0; iter < iterations; iter++) {
+                for (let i = 0; i < NUM_NODES; i++) {
+                    const j = (i + 1) % NUM_NODES;
+
+                    const p1 = nodes[i];
+                    const p2 = nodes[j];
+
+                    const delta = new THREE.Vector3().subVectors(p2, p1);
+                    const currentLen = delta.length();
+                    if (currentLen === 0) continue;
+
+                    const diff = (currentLen - LINK_REST_LENGTH) / currentLen;
+                    const correction = delta.multiplyScalar(diff * 0.5);
+
+                    if (i !== draggedNodeIndex || !isDragging) {
+                        p1.add(correction);
+                    }
+                    if (j !== draggedNodeIndex || !isDragging) {
+                        p2.sub(correction);
+                    }
+                }
+            }
+
+            updateTangleMeshGeometries();
+        }
+
+        /* =========================================================================
+           3. 마우스 / 터치 인터랙션
+           ========================================================================= */
+        function setupEventListeners() {
+            const canvas = document.getElementById('webgl-canvas');
+
+            canvas.addEventListener('pointerdown', onPointerDown);
+            canvas.addEventListener('pointermove', onPointerMove);
+            canvas.addEventListener('pointerup', onPointerUp);
+            canvas.addEventListener('pointercancel', onPointerUp);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function updateMouseCoords(e) {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function onPointerDown(e) {
+            updateMouseCoords(e);
+            raycaster.setFromCamera(mouse, camera);
+
+            const intersects = raycaster.intersectObjects(segmentMeshes, true);
+            if (intersects.length > 0) {
+                isDragging = true;
+                const hitObj = intersects[0].object;
+                draggedNodeIndex = hitObj.userData.index;
+
+                const hitPoint = intersects[0].point;
+                dragPlane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(new THREE.Vector3()).negate(), hitPoint);
+
+                soundEngine.playClack(1.2);
+            }
+        }
+
+        function onPointerMove(e) {
+            updateMouseCoords(e);
+
+            if (isDragging && draggedNodeIndex !== -1) {
+                raycaster.setFromCamera(mouse, camera);
+                if (raycaster.ray.intersectPlane(dragPlane, planeIntersect)) {
+                    const targetNode = nodes[draggedNodeIndex];
+                    
+                    const moveDelta = new THREE.Vector3().subVectors(planeIntersect, targetNode);
+                    velHistory[draggedNodeIndex].copy(moveDelta.multiplyScalar(0.45));
+                    
+                    targetNode.copy(planeIntersect);
+
+                    if (moveDelta.length() > 0.08) {
+                        soundEngine.playClack(moveDelta.length() * 4);
+                    }
+                }
+            }
+        }
+
+        function onPointerUp() {
+            if (isDragging) {
+                soundEngine.playClack(0.8);
+            }
+            isDragging = false;
+            draggedNodeIndex = -1;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            solvePhysics();
+
+            if (!isDragging) {
+                const time = Date.now() * 0.0008;
+                scene.rotation.y = Math.sin(time * 0.5) * 0.15;
+                scene.rotation.x = Math.cos(time * 0.3) * 0.1;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onload = function() {
+            init3D();
+        };
+    </script>
+</body>
+</html>
