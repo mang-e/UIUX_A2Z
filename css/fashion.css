@@ -1,36 +1,9 @@
-/* 메지루시 전용 장식 인터랙션 */
+/* A2Z 패션(fashion.html) 전용 스타일 — 코디 · 장식 꾸미기. style.css 다음에 불러와요. */
 
-.mj-scene {
-  overflow: visible;
-}
-
-.mj-charm {
-  cursor: grab;
-  touch-action: none;
-  transform-box: fill-box;
-}
-
-.mj-charm.lift {
-  cursor: grabbing;
-}
-
-.mj-charm.is-snapped {
-  filter: drop-shadow(0 1px 1px rgba(25, 33, 39, 0.16));
-}
-
-/* 옥 사진은 네 번째 카드의 배경으로만 적용 */
-
-#app .jade-image-card-background {
-  background-color: #f5f1eb !important;
-  background-image:
-    linear-gradient(
-      105deg,
-      rgba(255, 255, 255, 0.78) 0%,
-      rgba(255, 255, 255, 0.48) 48%,
-      rgba(255, 255, 255, 0.12) 100%
-    ),
-    var(--jade-image-card-url) !important;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
+.sw{width:32px;height:32px;border-radius:50%;box-shadow:inset 0 0 0 3px #fff8,0 0 0 2px var(--g3)}
+.sw.on{box-shadow:inset 0 0 0 3px #fff,0 0 0 3px var(--paper)}
+.swy{transform-box:fill-box;transform-origin:50% 0;animation:swy 2.2s ease-in-out infinite alternate}
+.dgs{touch-action:none}
+.dg{cursor:grab}
+.dg.lift{cursor:grabbing}
+@keyframes swy{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
