@@ -59,7 +59,7 @@ const PAGE = { food: 'food.html', play: 'play.html', fashion: 'fashion.html' };
 const CATS = {
   food: { n: '먹거리', i: 'bowl', d: '줄 서서 먹는 이유가 있어요. 요즘 맛집 문법을 맛보기로 체험해보세요.' },
   play: { n: '놀거리', i: 'controller', d: '손끝으로, 발품으로, 수집으로. 요즘 세대가 노는 방식을 직접 만져보세요.' },
-  fashion: { n: '패션', i: 'bag', d: '입는 것을 넘어 꾸미고 고르는 즐거움. 내 취향대로 조합해보세요.' },
+  fashion: { n: '패션', i: 'bag', d: '입는 것을 넘어 꾸미고 고르는 즐거움. <br> 내 취향대로 조합해보세요.' },
 };
 
 const LAB = { food: 'FOOD', play: 'PLAY', fashion: 'FASHION' };
