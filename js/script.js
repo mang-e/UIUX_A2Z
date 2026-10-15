@@ -1,4 +1,5 @@
-/* A2Z prototype — 해시 라우팅 SPA (#/ , #/cat/food , #/t/food/0) */
+/* A2Z prototype — 화면별 페이지 (index.html / food.html / play.html / fashion.html)
+   카테고리 페이지 안에서는 해시로 목록·상세를 전환 (food.html , food.html#/t/0) */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -52,6 +53,7 @@ const I = {
 };
 const ic = (n, a, b) => `<svg class="ic" viewBox="0 0 48 48" aria-hidden="true">${I[n](a, b)}</svg>`;
 
+const PAGE = { food: 'food.html', play: 'play.html', fashion: 'fashion.html' };
 const CATS = {
   food: { n: '먹거리', i: 'bowl', d: '줄 서서 먹는 이유가 있어요. 요즘 맛집 문법을 맛보기로 체험해보세요.' },
   play: { n: '놀거리', i: 'controller', d: '손끝으로, 발품으로, 수집으로. 요즘 세대가 노는 방식을 직접 만져보세요.' },
@@ -477,7 +479,7 @@ const pops = () => POP.map(([x, y, t, c, w]) => `<span class="pp" style="left:${
 
 const ABOUT_STEPS = { food: ['읽고', '맛보고'], play: ['읽고', '즐기고'], fashion: ['읽고', '꾸미고'] };
 function about(ks) {
-  const cat = k => `<a class="ab-cat ${k}" href="#/cat/${k}"><span class="tagp ${k}">${LAB[k]}</span><h4>${CATS[k].n}</h4><p>${CATS[k].d}</p><span class="view-more">VIEW →</span></a>`;
+  const cat = k => `<a class="ab-cat ${k}" href="${PAGE[k]}"><span class="tagp ${k}">${LAB[k]}</span><h4>${CATS[k].n}</h4><p>${CATS[k].d}</p><span class="view-more">VIEW →</span></a>`;
   return `<section class="about" id="about">
     <div class="ab-in">
       <div class="ab-head">
@@ -501,7 +503,7 @@ function about(ks) {
 
 function home() {
   const ks = Object.keys(CATS);
-  app.innerHTML = `<section class="view space">${pops()}${ks.map(k => `<a class="hb ${k}" href="#/cat/${k}" aria-label="${CATS[k].n}"><div class="shape">${BLOB[k]}</div>${badge(k)}<div class="txt"><span class="tagp ${k}">${LAB[k]}</span><h2>${CATS[k].n}</h2><p>${CATS[k].d}</p><span class="vlink">VIEW <svg viewBox="0 0 20 12" width="20" height="12" aria-hidden="true"><path d="M1 6h17M13 1.5L18 6l-5 4.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div></a>`).join('')}
+  app.innerHTML = `<section class="view space">${pops()}${ks.map(k => `<a class="hb ${k}" href="${PAGE[k]}" aria-label="${CATS[k].n}"><div class="shape">${BLOB[k]}</div>${badge(k)}<div class="txt"><span class="tagp ${k}">${LAB[k]}</span><h2>${CATS[k].n}</h2><p>${CATS[k].d}</p><span class="vlink">VIEW <svg viewBox="0 0 20 12" width="20" height="12" aria-hidden="true"><path d="M1 6h17M13 1.5L18 6l-5 4.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div></a>`).join('')}
     <div class="ripple"></div>
     <svg class="cursor" viewBox="0 0 24 24"><path d="M5 2l14 11-6.5 1.2L9.8 21z" fill="#FEFEFE" stroke="#1C1C20" stroke-width="1.5" stroke-linejoin="round"/></svg>
     <div class="tip">오브젝트를 클릭해보세요</div>
@@ -567,27 +569,28 @@ function layoutCards(mo) {
 function category(k) {
   const C = CATS[k], ts = T[k];
   const chev = '<svg viewBox="0 0 8 12" width="7" height="11"><path d="M1.5 1.5l4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const card = (t, i) => `<a class="c3${t.img ? ' has-img' : ''}" href="#/t/${k}/${i}"><div class="ph"${t.img ? ` style="background-image:url(${t.img})"` : ''}></div><svg class="ol"></svg><div class="ct"><h3>${t.t}</h3><p>${t.lead.split('.')[0]}.</p><span class="vm">VIEW MORE ${chev}</span></div></a>`;
+  const card = (t, i) => `<a class="c3${t.img ? ' has-img' : ''}" href="${PAGE[k]}#/t/${i}"><div class="ph"${t.img ? ` style="background-image:url(${t.img})"` : ''}></div><svg class="ol"></svg><div class="ct"><h3>${t.t}</h3><p>${t.lead.split('.')[0]}.</p><span class="vm">VIEW MORE ${chev}</span></div></a>`;
   app.innerHTML = `<section class="view cat4"><div class="cat4-head"><span class="tagp ${k}">${LAB[k]}</span><h2>${C.n}</h2><p>${C.d}</p></div><div class="mo2">${ts.slice(0, 4).map(card).join('')}</div></section>`;
   const mo = $('.mo2'); layoutCards(mo); new ResizeObserver(() => layoutCards(mo)).observe(mo);
 }
 
 function trend(k, i) {
   const list = T[k], t = list[i], prev = list[(i + list.length - 1) % list.length], next = list[(i + 1) % list.length];
-  app.innerHTML = `<section class="view tpage"><div class="tw"><a class="back" href="#/cat/${k}">← ${CATS[k].n} 목록</a>
+  app.innerHTML = `<section class="view tpage"><div class="tw"><a class="back" href="${PAGE[k]}">← ${CATS[k].n} 목록</a>
     <h1>${t.t}</h1><p class="lead">${t.lead}</p>${t.body.map(p => `<p class="tx">${p}</p>`).join('')}
     <div class="stage-wrap"><div class="stage" id="st"></div><div class="stage-bar" id="bar"></div></div>
-    <div class="pager"><a href="#/t/${k}/${(i + list.length - 1) % list.length}">← ${prev.t}</a><a href="#/t/${k}/${(i + 1) % list.length}">${next.t} →</a></div></div></section>`;
+    <div class="pager"><a href="${PAGE[k]}#/t/${(i + list.length - 1) % list.length}">← ${prev.t}</a><a href="${PAGE[k]}#/t/${(i + 1) % list.length}">${next.t} →</a></div></div></section>`;
   X[t.type]($('#st'), $('#bar'), t);
 }
 
 function route() {
-  const [a, k, i] = location.hash.replace('#/', '').split('/');
-  const cat = a === 'cat' || a === 't' ? (CATS[k] ? k : null) : null;
+  const page = document.body.dataset.page || 'home';
+  const cat = CATS[page] ? page : null;
+  const [a, i] = location.hash.replace('#/', '').split('/');
   document.body.className = cat ? '' : 'home'; document.body.dataset.c = cat || '';
-  nav.innerHTML = Object.keys(CATS).map(c => `<a href="#/cat/${c}" class="${c === cat ? 'on' : ''}" style="${c === cat ? '' : ''}">${CATS[c].n}</a>`).join('');
+  nav.innerHTML = Object.keys(CATS).map(c => `<a href="${PAGE[c]}" class="${c === cat ? 'on' : ''}" style="${c === cat ? '' : ''}">${CATS[c].n}</a>`).join('');
   scrollTo(0, 0);
-  if (!cat) home(); else if (a === 'cat') category(k); else trend(k, +i || 0);
+  if (!cat) home(); else if (a === 't') trend(cat, +i || 0); else category(cat);
 }
 document.addEventListener('click', e => {
   const a = e.target.closest('a.cue'); if (!a) return;
