@@ -44,7 +44,7 @@ const ART = {
  
 /* ---------------- 인터랙션 모듈 ---------------- */
 Object.assign(X, {
-  /* 옥: 줄에 옥 구슬을 끼워 팔찌 만들기 — 줄이 차면 팔찌로 묶이고, 다시 하기를 누르면 구슬이 빠져요 */
+  /* 옥: 줄에 옥 구슬을 끼워 팔찌 만들기 — 줄이 차면 팔찌로 묶이고, 다시 하기를 누르면 구슬이 빠져요 (okk_img 이미지 반영) */
   jade(st, bar) {
     const U = 288, KN = 14, B = U - KN, X0 = 36, CX = 180, CY = 165, GAP = 1, RT = 80, SK = RT / (U / (2 * Math.PI));
     /* 구슬 4종: 이름 · 줄 방향 길이(w) · 옥빛(밝은색, 기본색, 어두운색) */
@@ -66,7 +66,15 @@ Object.assign(X, {
     };
     const mini = i => `<svg class="bm" viewBox="-22 -18 44 36" aria-hidden="true">${shape(i)}</svg>`;
     const INIT = '원하는 구슬을 골라 줄에 끼워보세요. 줄이 가득 차면 팔찌가 완성돼요.';
-    st.innerHTML = defs + '<svg id="sc" class="scene" viewBox="0 0 360 330"></svg><div class="say" id="say" aria-live="polite"></div>';
+    
+    // SVG 배경 대신 okk_img 이미지를 담을 수 있는 컨테이너 구조로 변경
+    st.innerHTML = defs + `
+      <div class="jade-scene-container">
+        <img id="okkImg" class="jade-bg-img" src="images/okk_img.png" alt="옥 이미지">
+        <svg id="sc" class="scene" viewBox="0 0 360 330" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></svg>
+      </div>
+      <div class="say" id="say" aria-live="polite"></div>
+    `;
     const sc = $('#sc', st), say = m => { $('#say', st).textContent = m; };
  
     let beads = [], done = false, busy = false, newest = -1;
@@ -137,7 +145,7 @@ Object.assign(X, {
     bar.onclick = e => {
       const b = e.target.closest('button'); if (!b) return; const d = b.dataset;
       if (d.it) it = +d.it; if (d.c) col = +d.c;
-      if (d.k) { const at = c.items[it].at; ch.push({ id: ++id, k: d.k, x: Math.max(30, Math.min(330, at[0] + (Math.random() - .5) * 150)), y: Math.max(30, Math.min(300, at[1] + 10 + Math.random() * 50)) }); if (ch.length > 8) ch.shift(); beep(700); }
+      if (d.k) { const at = c.items[it].at; ch.push({ id: ++id, k: d.k, x: Math.max(30, Math.min(330, at[0] + (Math.random() - .5) .150)), y: Math.max(30, Math.min(300, at[1] + 10 + Math.random() * 50)) }); if (ch.length > 8) ch.shift(); beep(700); }
       if (d.r) ch = [];
       rows(); draw();
     };
